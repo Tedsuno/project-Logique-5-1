@@ -50,9 +50,12 @@ let coloriage = [
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
-let simplifie l clauses =
-  (* à compléter *)
-  []
+   let simplifie l clauses =
+    (* Enlever la clause si le littéral l est à vrai *)
+    let clause_supr = List.filter (fun clause -> (List.mem l clause) = false) clauses in
+    (* Enlever le littéral l s'il est faux *)
+    List.map (fun clause -> List.filter (fun x -> x <> (-l)) clause) clause_supr
+  ;;
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -81,22 +84,76 @@ let rec solveur_split clauses interpretation =
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
-let pur clauses =
-  (* à compléter *)
-  0
+    let pur clauses = 
+      (* Applatit la liste de liste pour faciliter la recherche.*)
+      let flat = List.flatten clauses 
+      in 
+      let rec chercher memoire list_flat =
+        match list_flat with 
+        | [] -> failwith "pas de littéral pur"
+        | a::r -> 
+            if not (List.mem (-a) r) && not ( (List.mem (a) memoire) || (List.mem (-a) memoire) ) then
+              a 
+            else
+              (*Mettre en mémoire les valeurs qui ne sont pas pures*) 
+              chercher (a::memoire) r
+      in chercher [] flat     
+    ;;
+
 
 (* unitaire : int list list -> int
     - si `clauses' contient au moins une clause unitaire, retourne
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
-let unitaire clauses =
-  (* à compléter *)
-  0
+    let unitaire clauses =
+      (* On crée ici une fonction auxiliaire récursive (course) qui 
+         parcours chaque clause de l'ensemble des clauses et qui vérifie
+         si il existe une clause unitaire et la renvoie *)
+      let rec course cls =
+         match cls with
+         | [] -> raise Not_found
+         | a::r -> match a with
+         (*Si ici [a] est une clause unitaire on renvoie son littéral a
+          sinon on continue à chercher dans le reste (r) *)
+                   | [a] -> a
+                   | _ -> course r
+      in course clauses
+      
+    (* solveur_dpll_rec : int list list -> int list -> int list option *)
+    (* solveur dpll récursif *)
+    let rec solveur_dpll_rec clauses interpretation =
+      (*ON COMMENCE PAR VERIFIER LES CAS DE BASES :*)
+      (* l'ensemble vide de clauses est satisfiable *)
+      if clauses = [] then Some interpretation else
+      (* la clause vide n'est jamais satisfiable *)
+      if mem [] clauses then None else
+      (* ENSUITE ON SUIT L'ALGORITHME DONNE EN COURS : *) 
+        (*On commence par chercher une clause unitaire :*)
+        try let unitaires = unitaire clauses in
+          (*Si elle a été trouvé on rappelle DPLL en rajoutant le littéral dans l'interpretation :*)
+          solveur_dpll_rec (simplifie unitaires clauses) (unitaires::interpretation) 
+        with
+        | Not_found -> 
+          (*Si elle n'a pas été trouvé on cherche un littéral pur :*)
+            try let pure = pur clauses in 
+              (*Si le littéral pur a été trouvé 
+               on rappelle DPLL en rajoutant le littéral dans l'interpretation *)
+              solveur_dpll_rec (simplifie pure clauses) (pure::interpretation)
+            with
+            | Failure _ -> 
+              (*Si le pur n'a pas été trouvé on prend le premier littéral qu'on trouve :*)
+                let first=List.hd (List.hd clauses) in
+                (*On l'étend' ici comme en cours à l'arbre*)
+                let extension= solveur_dpll_rec(simplifie first clauses)(first::interpretation) in
+                match extension with
+                (*Si il ne trouve rien avec le littéral positif on teste avec sa forme négative*)
+                | None -> solveur_dpll_rec (simplifie (-first) clauses ) ((-first)::interpretation)
+                (*S'il trouve on renvoie finalement cette extension montré comme en cours*)
+                | _ -> extension
+    ;;
 
-(* solveur_dpll_rec : int list list -> int list -> int list option *)
-let rec solveur_dpll_rec clauses interpretation =
-  (* à compléter *)
-  None
+
+
 
 
 (* tests *)
