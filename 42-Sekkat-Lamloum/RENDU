@@ -19,7 +19,11 @@ Questions sur votre code
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
+   Oui, nous avant testé que `make dpll` s'exécute sans erreurs ou warnings, ça nous affiche:
+   `ocamlfind ocamlopt -o dpll -package str -linkpkg dimacs.ml dpll.ml`
+
+   Oui encore une fois nous avons testé `./dpll sudoku-4x4.cnf` donne la réponse attendue
+   et ça donne la même réponse.
 
 ---
 
@@ -30,7 +34,20 @@ Questions sur votre code
    - Si non, expliquez en quelques phrases en français comment
      fonctionne votre implémentation de `simplifie`.
 
-**à remplir**
+   Non nous n'avons pas utilisé la fonction `filter_map`.
+
+   Notre implémentation de `simplifie` fonctionne comme tel :
+
+   1.Nous avons utilisé la fonction `List.filter` pour nous donner les sous-listes 
+   correspondant au prédicat (si on ne trouve pas le littéral 'l' 
+   (via la fonction de recherche `List.mem`), 
+   alors elle nous donne les sous-listes correspondantes 'clause_supr').
+   Ceci permet d'éliminer les clauses contenant 'l'.
+
+   2.Nous avons ensuite utilisé la fonction `List.map` pour appliquer la fonction 
+   suivante à 'clause_supr' :
+   Pour chaque clause, la fonction List.filter est à nouveau utilisée pour supprimer 
+   le littéral (-l) seulement.
 
 ---
 
@@ -43,7 +60,11 @@ Questions sur votre code
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `unitaire`.
 
-**à remplir**
+   Nous avons crée une fonction récursive auxiliaire `course` dans la
+   fonction unitaire. Cette fonction nous permet de parcourir l'ensemble
+   des clauses et de vérifier si une clause est une clause unitaire en vérifiant
+   si la clause en question contient un seul littéral. Si c'est le cas nous renvoyons
+   ce littéral sinon nous continuons la recherche récursivement.
 
 ---
 
@@ -52,7 +73,11 @@ Questions sur votre code
    quelques phrases en français comment ces fonctions auxiliaires sont
    utilisées dans votre implémentation de la fonction `pur`.
 
-**à remplir**
+   Pour cette fonction `pur`, nous avons utilisé les fonctions `List.flatten` 
+   ainsi que `List.map` issues de la bibliothèque. `List.flatten` permet d'aplatir 
+   une double liste en une liste simple, ce qui nous permet d'agir plus facilement 
+   sur celle-ci pour trouver un littéral pur. Nous avons également utilisé `List.map` 
+   pour rechercher à travers cette liste ainsi qu'à la liste 'memoire' des littéraux spécifiques.
 
 ---
 
@@ -60,13 +85,18 @@ Questions sur votre code
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
-**à remplir**
+   
 
 ---
 
 5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
 
-**à remplir**
+   Oui, nous avons testé les fichiers DIMACS de votre site tout marche sauf 3 fichiers
+   qui posent problème, nous avons `hamilton.cnf` ,'ais12.cnf' et `sudoku-9x9-god.cnf`,
+   les deux premiers posent juste un problème de temps, ils prennent plusieurs minutes à
+   s'exécuter mais le dernier ne veut pas finir son exécution. Nous avons donc compris que
+   pour les deux premiers le problème venait de la compléxité de nos algorithmes mais pour
+   le dernier nous ne comprennont pas le problème d'exécution.
 
 ---
 
