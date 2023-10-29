@@ -22,7 +22,7 @@ Questions sur votre code
    Oui, nous avant testé que `make dpll` s'exécute sans erreurs ou warnings, ça nous affiche:
    `ocamlfind ocamlopt -o dpll -package str -linkpkg dimacs.ml dpll.ml`
 
-   Oui encore une fois nous avons testé `./dpll sudoku-4x4.cnf` donne la réponse attendue
+   Oui, nous avons testé `./dpll sudoku-4x4.cnf` donne la réponse attendue
    et ça donne la même réponse.
 
 ---
@@ -62,7 +62,7 @@ Questions sur votre code
 
    Nous avons crée une fonction récursive auxiliaire `course` dans la
    fonction unitaire. Cette fonction nous permet de parcourir l'ensemble
-   des clauses et de vérifier si une clause est une clause unitaire en vérifiant
+   des clauses et de vérifier si une clause est une clause unitaire, en vérifiant
    si la clause en question contient un seul littéral. Si c'est le cas nous renvoyons
    ce littéral sinon nous continuons la recherche récursivement.
 
@@ -85,18 +85,22 @@ Questions sur votre code
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
-   
+   Un exemple pour lequelle les deux fonctions `solveur_split` 
+   et `solveur_dpll_rec` ont un comportement différent serait : 
+   F = (A ∨ B) ∧ (¬A ∨ C) ∧ (D ∨ E) ∧ (¬D ∨ ¬E)
+   La fonction, `solveur_split`, sélectionne le premier littéral dans
+   la première clause et explore toutes les combinaisons en forçant chaque littéreal
+   sans qu'il soit forcément unitaire ou pur. Cependant, la fonction `solveur_dpll_rec`
+   adopte une approche plus méthodique en priorisant d'abord les littéraux unitaires
+   et purs, puis suit les règles de base de DPLL.
 
 ---
 
 5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
 
-   Oui, nous avons testé les fichiers DIMACS de votre site tout marche sauf 3 fichiers
-   qui posent problème, nous avons `hamilton.cnf` ,'ais12.cnf' et `sudoku-9x9-god.cnf`,
-   les deux premiers posent juste un problème de temps, ils prennent plusieurs minutes à
-   s'exécuter mais le dernier ne veut pas finir son exécution. Nous avons donc compris que
-   pour les deux premiers le problème venait de la compléxité de nos algorithmes mais pour
-   le dernier nous ne comprennont pas le problème d'exécution.
+   Oui, nous avons testé les fichiers DIMACS de votre site, tout marche sauf 1 fichier
+   qui pose problème, il s'agit de `sudoku-9x9-god.cnf`, l'éxecution de `sudoku-9x9-god.cnf`
+   ne veut pas finir. Nous ne comprenons pas le problème.
 
 ---
 
